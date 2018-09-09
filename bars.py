@@ -1,5 +1,4 @@
 import json
-import inspect
 import argparse
 
 
@@ -9,11 +8,17 @@ def load_data(filepath):
 
 
 def get_biggest_bar(bar_data):
-    return max(bar_data, key=lambda x: x['properties']['Attributes']['SeatsCount'])
+    return max(
+        bar_data,
+        key=lambda x: x['properties']['Attributes']['SeatsCount']
+    )
 
 
 def get_smallest_bar(bar_data):
-    return min(bar_data, key=lambda x: x['properties']['Attributes']['SeatsCount'])
+    return min(
+        bar_data,
+        key=lambda x: x['properties']['Attributes']['SeatsCount']
+    )
 
 
 def get_distance(bar_data, longitude, latitude):
@@ -25,15 +30,12 @@ def get_closest_bar(bar_data, longitude, latitude):
     return min(bar_data, key=lambda x: get_distance(x, longitude, latitude))
 
 
-def print_bar(bar_found):
-    # Get the calling function name to pick up an adjective from the features dictionary
-    caller = inspect.stack()[1].code_context[0]
-    features = {'biggest': 'большой', 'smallest': 'маленький', 'closest': 'близкий'}
-    adj = [desc for feat, desc in features.items() if feat in caller][0]
+def print_bar(feature, bar):
     print(
-        '\nСамый {0} бар: {1},'.format(adj, bar_found['properties']['Attributes']['Name']),
-        'мест: {0}'.format(bar_found['properties']['Attributes']['SeatsCount']),
-        '\nАдрес: {0}'.format(bar_found['properties']['Attributes']['Address']),
+        feature,
+        '{0},'.format(bar['properties']['Attributes']['Name']),
+        'мест: {0}'.format(bar['properties']['Attributes']['SeatsCount']),
+        '\nАдрес: {0}'.format(bar['properties']['Attributes']['Address']),
     )
     return None
 
@@ -50,10 +52,21 @@ if __name__ == '__main__':
     args = get_args()
     try:
         bar_list = load_data(args.file)
+    except FileNotFoundError:
+        print('File not found')
     except json.decoder.JSONDecodeError:
         print('Please specify valid JSON file')
     else:
-        print_bar(get_biggest_bar(bar_list))
-        print_bar(get_smallest_bar(bar_list))
+        print_bar(
+            'Самый большой бар:',
+            get_biggest_bar(bar_list)
+        )
+        print_bar(
+            'Самый маленький бар:',
+            get_smallest_bar(bar_list)
+        )
     if args.longitude and args.latitude:
-        print_bar(get_closest_bar(bar_list, args.longitude, args.latitude))
+        print_bar(
+            'Самый близкий бар:',
+            get_closest_bar(bar_list, args.longitude, args.latitude)
+        )
