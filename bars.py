@@ -31,7 +31,7 @@ def print_bar(bar_found):
     features = {'biggest': 'большой', 'smallest': 'маленький', 'closest': 'близкий'}
     adj = [desc for feat, desc in features.items() if feat in caller][0]
     print(
-        'Самый {0} бар: {1},'.format(adj, bar_found['properties']['Attributes']['Name']),
+        '\nСамый {0} бар: {1},'.format(adj, bar_found['properties']['Attributes']['Name']),
         'мест: {0}'.format(bar_found['properties']['Attributes']['SeatsCount']),
         '\nАдрес: {0}'.format(bar_found['properties']['Attributes']['Address']),
     )
